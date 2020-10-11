@@ -1,7 +1,5 @@
 <?php
-
-
-use DI\ContainerBuilder;
+namespace App\Application\Container;
 
 class BootSetting
 {
