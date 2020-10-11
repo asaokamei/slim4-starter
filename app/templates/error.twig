@@ -1,0 +1,18 @@
+{% extends('layouts/layout.html.twig') %}
+
+{% block contents %}
+
+<h1>Error!</h1>
+
+<p>sorry, we encountered some errors...</p>
+
+{% if title %}
+    <p style="font-weight: bold;">{{ title|raw }}</p>
+{% endif %}
+
+{% if detail %}
+    <hr>
+    <p style="font-weight: normal;">{{ detail|raw|nl2br }}</p>
+{% endif %}
+
+{% endblock %}
