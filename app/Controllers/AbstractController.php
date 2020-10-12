@@ -5,22 +5,17 @@ namespace App\Controllers;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Log\LoggerInterface;
+use ReflectionException;
+use ReflectionMethod;
 use Slim\Exception\HttpBadRequestException;
 use Slim\Exception\HttpMethodNotAllowedException;
 use Slim\Views\Twig;
-use Symfony\Component\Form\FormFactoryInterface;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
 abstract class AbstractController
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
     /**
      * @var ServerRequestInterface
      */
@@ -42,12 +37,10 @@ abstract class AbstractController
     protected $view;
 
     /**
-     * @param LoggerInterface $logger
      * @param Twig $view
      */
-    public function __construct(LoggerInterface $logger, Twig $view)
+    public function __construct(Twig $view)
     {
-        $this->logger = $logger;
         $this->view = $view;
     }
 
@@ -56,19 +49,76 @@ abstract class AbstractController
      * @param ResponseInterface $response
      * @param array $args
      * @return ResponseInterface
-     * @throws HttpMethodNotAllowedException
+     * @throws HttpMethodNotAllowedException|ReflectionException
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $args): ResponseInterface
     {
         $this->request = $request;
         $this->response = $response;
         $this->args = $args + $request->getQueryParams();
+        $this->populateArgs();
 
         $method = 'on' . ($request->getAttribute('_method') ?? $request->getMethod());
+        if (method_exists($this, 'action')) {
+            return $this->_invokeMethod('action');
+        }
         if (method_exists($this, $method)) {
-            return $this->$method();
+            return $this->_invokeMethod($method);
         }
         throw new HttpMethodNotAllowedException($request);
+    }
+
+    /**
+     * @param string $method
+     * @return mixed|ResponseInterface
+     * @throws ReflectionException
+     */
+    private function _invokeMethod($method)
+    {
+        $method = new ReflectionMethod($this, $method);
+        $parameters = $method->getParameters();
+        $arguments = [];
+        foreach ($parameters as $arg) {
+            $position = $arg->getPosition();
+            $varName = $arg->getName();
+            $optionValue = $arg->isOptional() ? $arg->getDefaultValue() : null;
+            $value = isset($params[$varName]) ? $params[$varName] : $optionValue;
+            $arguments[$position] = $value;
+        }
+        $method->setAccessible(true);
+        return $method->invokeArgs($this, $arguments);
+    }
+
+    /**
+     * alternate input arguments.
+     * add 'modKeyName' method to change its value.
+     * ex: user_id -> argUserId
+     *
+     * return a value to override the original value.
+     * or, return an associated array to add new key/value pair.
+     * ex: ['user' => $user]
+     */
+    private function populateArgs()
+    {
+        foreach ($this->args as $key => $val) {
+            $modifier = 'arg' . $this->snakeToCarmel($key);
+            if (!method_exists($this, $modifier)) {
+                continue;
+            }
+            $return = $this->$modifier($val);
+            if (is_array($return)) {
+                foreach ($return as $k => $v) {
+                    $this->args[$k] = $v;
+                }
+            } else {
+                $this->args[$key] = $return;
+            }
+        }
+    }
+
+    private function snakeToCarmel(string $key): string
+    {
+        return str_replace('_', '', ucwords($key, '_'));
     }
 
     /**
@@ -84,11 +134,6 @@ abstract class AbstractController
         return $this->view->render($this->response, $template, $data);
     }
 
-    protected function form(): FormFactoryInterface
-    {
-        return $this->formFactory;
-    }
-
     protected function csrfTokenName(): string
     {
         return $this->request->getAttribute('_csrf_name');
@@ -100,9 +145,10 @@ abstract class AbstractController
     }
 
     /**
-     * @param  string $name
+     * @param string $name
      * @return mixed
      * @throws HttpBadRequestException
+     * @noinspection PhpUnused
      */
     protected function resolveArg(string $name)
     {

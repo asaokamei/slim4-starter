@@ -36,17 +36,15 @@ class HttpErrorHandler extends ErrorHandler
         $statusCode = $this->exception->getCode();
 
         $response = $this->responseFactory->createResponse($statusCode);
-        $detail = $this->displayErrorDetails
-            ? "{$exception->getFile()} @ {$exception->getLine()}
-            {$exception->getTraceAsString()}"
-            : null;
+        $exception = $this->displayErrorDetails
+            ? $exception : null;
         $title = $exception instanceof HttpException
             ? $exception->getTitle()
             : get_class($exception);
         try {
             return $this->twig->render($response, 'error.twig', [
                 'title' => $title,
-                'detail' => $detail,
+                'exception' => $exception,
             ]);
         } catch (Throwable $e) {
             $response->getBody()->write('<h1>error</h1>');
