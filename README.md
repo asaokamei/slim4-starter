@@ -7,5 +7,6 @@ A starter project for,
 - PHP-DI,
 - nyholm/psr7,
 - monolog,
+- Twig (using `slim/twig-view`)
 
 with sample directory. 

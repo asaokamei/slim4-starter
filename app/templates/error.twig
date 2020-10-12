@@ -10,9 +10,50 @@
     <p style="font-weight: bold;">{{ title|raw }}</p>
 {% endif %}
 
-{% if detail %}
+{% if exception is defined %}
     <hr>
-    <p style="font-weight: normal;">{{ detail|raw|nl2br }}</p>
+    <h2>Error Details</h2>
+    <p>File: {{ exception.file }}</p>
+    <p>Line: {{ exception.line }}</p>
+
+<pre>{{ exception.traceAsString }}</pre>
+
+    <style>
+        td, th {
+            padding: .2em;
+            border: 1px solid #999999;
+        }
+        .bottom {
+            border-bottom: 2px solid #333333;
+        }
+    </style>
+    <table style="border-collapse: collapse;">
+        <thead>
+        <tr>
+            <th rowspan="2">#</th>
+            <th colspan="6 ">#line @class -> method name</th>
+        </tr>
+        <tr class="bottom">
+            <th>file</th>
+        </tr>
+        </thead>
+        {% for key, line in exception.trace %}
+            <tr>
+                <td rowspan="3">{{ key }}</td>
+                <td colspan="6">#{{ line.line }} @ {{ line.class }}{{ line.type }}{{ line.function }}</td>
+            </tr>
+            <tr>
+                <td>{{ line.file }}</td>
+            </tr>
+            <tr class="bottom">
+                <td>{{ line.args }}
+                    {% for arg in line.args %}
+                        { { arg }}
+                    {% endfor %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endif %}
 
 {% endblock %}

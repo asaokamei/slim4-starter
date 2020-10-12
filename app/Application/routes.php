@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use App\Controllers\Forms\FormController;
+use App\Controllers\Welcome\WelcomeController;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
@@ -23,3 +24,5 @@ $app->get('/', function (Request $request, Response $response) {
 })->setName('hello');
 
 $app->any('/form', FormController::class)->setName('form');
+
+$app->any('/welcome/{name}', WelcomeController::class)->setName('welcome');
