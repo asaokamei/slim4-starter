@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use Slim\App;
+use App\AppBuilder;
 use Slim\Factory\ServerRequestCreatorFactory;
 use Slim\ResponseEmitter;
 
@@ -14,30 +14,17 @@ if (php_sapi_name() == 'cli-server') {
 }
 SERVER:
 
+require __DIR__ . '/../vendor/autoload.php';
 session_start();
 
-/** @var App $app */
-$useCache = false;
-$showError = true;
-$appBuilder = include __DIR__ . '/../app/app.php';
-$app = $appBuilder($useCache, $showError);
-
-$callableResolver = $app->getCallableResolver();
-
-// Register middleware
-$middleware = require __DIR__ . '/../app/middleware.php';
-$middleware($app);
-
-// Register routes
-$routes = require __DIR__ . '/../app/routes.php';
-$routes($app);
-
 // Create Request object from globals
-$request = ServerRequestCreatorFactory::create()->createServerRequestFromGlobals();
+$request = ServerRequestCreatorFactory::create()
+    ->createServerRequestFromGlobals();
 
-// Handle errors
-$errors = require __DIR__ . '/../app/errors.php';
-$errors($app, $request);
+$app = AppBuilder::forge(realpath(__DIR__.'/../'))
+    ->setUseCache(false)
+    ->setShowError(true)
+    ->build($request);
 
 // Run App & Emit Response
 $response = $app->handle($request);
