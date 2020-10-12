@@ -1,40 +1,40 @@
 <?php
 declare(strict_types=1);
 
-use DI\ContainerBuilder;
+use App\Application\Container\BootContainer;
+use App\Application\Container\BootEnv;
 use Slim\App;
 use Slim\Factory\AppFactory;
 
 require __DIR__ . '/../vendor/autoload.php';
 
 /**
- * @param bool $production
+ * @param bool $useCache
+ * @param bool $showError
  * @return App
  */
-return function ($production = false)
+return function ($useCache = false, $showError = true)
 {
-
-    // Instantiate PHP-DI ContainerBuilder
-    $containerBuilder = new ContainerBuilder();
-
-    if ($production) { // Should be set to true in production
-        $containerBuilder->enableCompilation(__DIR__ . '/../var/cache');
-    }
+    $projectRoot = realpath(__DIR__.'/../');
+    $cacheRoot = $projectRoot . '/var/cache/';
 
     // Set up settings
-    $settings = require __DIR__ . '/../app/settings.php';
-    $settings($containerBuilder, $production);
 
-    // Set up dependencies
-    $dependencies = require __DIR__ . '/../app/dependencies.php';
-    $dependencies($containerBuilder);
-
-    // Set up repositories
-    $repositories = require __DIR__ . '/../app/repositories.php';
-    $repositories($containerBuilder);
+    $env = BootEnv::forge($projectRoot, $cacheRoot)
+        ->setUseCache($useCache);
+    $defaults = [
+        'projectRoot' => $projectRoot,
+        'cacheDirectory' => $cacheRoot,
+        'production' => $env->isProduction(),
+        'displayErrorDetails' => $showError,
+    ];
+    $settings = $defaults + $env->load();
 
     // Build PHP-DI Container instance
-    $container = $containerBuilder->build();
+
+    $container = BootContainer::forge($settings)
+        ->setUseCache($useCache)
+        ->build();
 
     // Instantiate the app
     AppFactory::setContainer($container);

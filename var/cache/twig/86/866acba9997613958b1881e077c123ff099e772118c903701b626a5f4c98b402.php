@@ -44,31 +44,44 @@ class __TwigTemplate_3cc58ad25014a09f14bfc5fb9136f2b8d156fea509c9a689ae92cab8dec
         body {
             font-family: \"Lucida Grande\", \"Lucida Sans Unicode\", Verdana, Arial, Helvetica, sans-serif;
             font-size: 16px;
+            margin: 0;
+        }
+        header {
+            margin: 0;
+            padding: 1rem;
+            border-bottom: 1px solid #cccccc;
         }
         a.header-title {
             font-size: 2rem;
+            text-decoration: none;
+        }
+        div.contents {
+            margin: 1rem;
         }
     </style>
 </head>
 <body>
 <header>
     <a class=\"header-title\" href=\"/\">Slim4 Starter</a>
-    <hr>
 </header>
 
-";
-        // line 22
+<div class=\"contents\">
+    ";
+        // line 32
         $this->displayBlock('contents', $context, $blocks);
-        // line 24
-        echo "
+        // line 34
+        echo "</div>
+
 </body>
 </html>";
     }
 
-    // line 22
+    // line 32
     public function block_contents($context, array $blocks = [])
     {
         $macros = $this->macros;
+        // line 33
+        echo "    ";
     }
 
     public function getTemplateName()
@@ -78,7 +91,7 @@ class __TwigTemplate_3cc58ad25014a09f14bfc5fb9136f2b8d156fea509c9a689ae92cab8dec
 
     public function getDebugInfo()
     {
-        return array (  69 => 22,  63 => 24,  61 => 22,  38 => 1,);
+        return array (  84 => 33,  80 => 32,  73 => 34,  71 => 32,  38 => 1,);
     }
 
     public function getSourceContext()

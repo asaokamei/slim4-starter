@@ -54,8 +54,11 @@ class __TwigTemplate_be04309d6c95c5670fdd68bc0b8ec9c760f2e81bbd8ce8e474ad0c54180
 
 <p>links...</p>
 <ul>
+    <li><a href=\"";
+        // line 11
+        echo twig_escape_filter($this->env, $this->env->getRuntime('Slim\Views\TwigRuntimeExtension')->urlFor("form"), "html", null, true);
+        echo "\">form samples (not-yet-ready)</a></li>
     <li><a href=\"/bad\">not found error</a></li>
-    <li><a href=\"/form\">form sample</a></li>
 </ul>
 
 ";
@@ -73,7 +76,7 @@ class __TwigTemplate_be04309d6c95c5670fdd68bc0b8ec9c760f2e81bbd8ce8e474ad0c54180
 
     public function getDebugInfo()
     {
-        return array (  50 => 4,  46 => 3,  35 => 1,);
+        return array (  59 => 11,  50 => 4,  46 => 3,  35 => 1,);
     }
 
     public function getSourceContext()

@@ -12,7 +12,7 @@ use Slim\Interfaces\RouteCollectorProxyInterface as Group;
 return function (App $app) {
     $app->get('/', function (Request $request, Response $response) {
         return $this->get('view')->render($response, 'hello.twig');
-    });
+    })->setName('hello');
 
-    $app->any('/form', FormController::class);
+    $app->any('/form', FormController::class)->setName('form');
 };
