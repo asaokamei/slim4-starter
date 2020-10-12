@@ -7,20 +7,31 @@
         body {
             font-family: "Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif;
             font-size: 16px;
+            margin: 0;
+        }
+        header {
+            margin: 0;
+            padding: 1rem;
+            border-bottom: 1px solid #cccccc;
         }
         a.header-title {
             font-size: 2rem;
+            text-decoration: none;
+        }
+        div.contents {
+            margin: 1rem;
         }
     </style>
 </head>
 <body>
 <header>
     <a class="header-title" href="/">Slim4 Starter</a>
-    <hr>
 </header>
 
-{% block contents %}
-{% endblock %}
+<div class="contents">
+    {% block contents %}
+    {% endblock %}
+</div>
 
 </body>
 </html>
