@@ -3,10 +3,12 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Controllers\Tools\ViewTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionException;
 use ReflectionMethod;
+use Slim\App;
 use Slim\Exception\HttpBadRequestException;
 use Slim\Exception\HttpMethodNotAllowedException;
 use Slim\Views\Twig;
@@ -32,16 +34,16 @@ abstract class AbstractController
     protected $args;
 
     /**
-     * @var Twig
+     * @var App
      */
-    protected $view;
+    private $app;
 
     /**
-     * @param Twig $view
+     * @param App|null $app
      */
-    public function __construct(Twig $view)
+    public function __construct(App $app)
     {
-        $this->view = $view;
+        $this->app = $app;
     }
 
     /**
@@ -131,7 +133,8 @@ abstract class AbstractController
      */
     protected function view(string $template, array $data = []): ResponseInterface
     {
-        return $this->view->render($this->response, $template, $data);
+        $view = $this->app->getContainer()->get(Twig::class);
+        return $view->render($this->response, $template, $data);
     }
 
     protected function csrfTokenName(): string
