@@ -1,0 +1,45 @@
+<?php
+/**
+ * Slim Framework (http://slimframework.com)
+ *
+ * @license   https://github.com/slimphp/Twig-View/blob/master/LICENSE.md (MIT License)
+ */
+
+declare(strict_types=1);
+
+namespace App\Application\Twig;
+
+use Psr\Http\Message\ServerRequestInterface;
+use Slim\Interfaces\RouteParserInterface;
+use Slim\Views\TwigRuntimeExtension;
+
+class TwigFunctions extends TwigRuntimeExtension
+{
+    /**
+     * @var ServerRequestInterface
+     */
+    private $request;
+
+    /**
+     * @param RouteParserInterface $routeParser Route parser
+     * @param ServerRequestInterface $request Uri
+     * @param string $basePath Base path
+     */
+    public function __construct(RouteParserInterface $routeParser, ServerRequestInterface $request, string $basePath = '')
+    {
+        parent::__construct($routeParser, $request->getUri(), $basePath);
+        $this->request = $request;
+    }
+
+    public function getCsrfTokens()
+    {
+        $name = $this->request->getAttribute('_csrf_name');
+        $value = $this->request->getAttribute('_csrf_value');
+        $tags = <<< END_TAGS
+<input type="hidden" name="_csrf_name" value="{$name}">
+<input type="hidden" name="_csrf_value" value="{$value}">
+END_TAGS;
+
+        return $tags;
+    }
+}
