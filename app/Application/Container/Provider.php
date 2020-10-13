@@ -13,20 +13,21 @@ use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Log\LoggerInterface;
 use Slim\Csrf\Guard;
 use Slim\Views\Twig;
+use function DI\get;
 
 class Provider
 {
     public function getDefinitions(): array
     {
         $list = [
-            ResponseFactoryInterface::class => \DI\get(Psr17Factory::class),
+            ResponseFactoryInterface::class => get(Psr17Factory::class),
             Psr17Factory::class => 'getPsr17Factory',
             LoggerInterface::class => 'getMonolog',
             Twig::class => 'getTwig',
             Guard::class => 'getCsrfGuard',
 
-            'view' => \DI\get(Twig::class),
-            'csrf' => \DI\get(Guard::class),
+            'view' => get(Twig::class),
+            'csrf' => get(Guard::class),
         ];
         return $this->prepare($list);
     }

@@ -10,6 +10,8 @@ use Slim\Handlers\ErrorHandler;
 use Slim\Interfaces\CallableResolverInterface;
 use Slim\Views\Twig;
 use Throwable;
+use Whoops\Handler\PrettyPageHandler;
+use Whoops\Run;
 
 class HttpErrorHandler extends ErrorHandler
 {
@@ -38,8 +40,8 @@ class HttpErrorHandler extends ErrorHandler
         $response = $this->responseFactory->createResponse($statusCode);
 
         if ($this->displayErrorDetails) {
-            $whoops = new \Whoops\Run;
-            $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
+            $whoops = new Run;
+            $whoops->pushHandler(new PrettyPageHandler);
             $response->getBody()->write($whoops->handleException($exception));
             return $response;
         }

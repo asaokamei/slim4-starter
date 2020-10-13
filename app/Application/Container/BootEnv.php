@@ -51,7 +51,7 @@ class BootEnv
         if (file_exists($this->cacheFile) && $this->isCacheNewer($this->cacheFile, $this->envFile)) {
             return json_decode(file_get_contents($this->cacheFile));
         }
-        $settings = $this->parseEnvFile();;
+        $settings = $this->parseEnvFile();
         if (file_exists($this->cacheFile)) {
             unlink($this->cacheFile);
         }
