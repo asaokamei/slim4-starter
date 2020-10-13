@@ -4,6 +4,8 @@ namespace App;
 
 use App\Application\Container\BootContainer;
 use App\Application\Container\BootEnv;
+use App\Application\Handlers\BootHandlers;
+use App\Application\Middleware\BootMiddleware;
 use Exception;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
@@ -59,12 +61,12 @@ class AppBuilder
     {
         $app = $this->makeApp();
 
-        $app = $this->middleware($app);
+        BootMiddleware::setup($app);
 
-        $app = $this->routes($app);
+        $this->routes($app);
 
         if ($request) {
-            $app = $this->errors($app, $request);
+            BootHandlers::setup($app, $request);
         }
 
         return $app;
@@ -73,20 +75,6 @@ class AppBuilder
     private function routes(App $app): App
     {
         require __DIR__ . '/Application/routes.php';
-
-        return $app;
-    }
-
-    private function middleware(App $app): App
-    {
-        require __DIR__ . '/Application/middleware.php';
-
-        return $app;
-    }
-
-    private function errors(App $app, ServerRequestInterface $request): App
-    {
-        require __DIR__ . '/Application/errors.php';
 
         return $app;
     }
