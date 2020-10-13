@@ -12,14 +12,14 @@ use Slim\Factory\AppFactory;
 class AppBuilder
 {
     /**
-     * @var false
+     * @var bool
      */
-    private $useCache;
+    private $useCache = false;
 
     /**
      * @var bool
      */
-    private $showError;
+    private $showError = false;
 
     /**
      * @var string
@@ -117,8 +117,10 @@ class AppBuilder
 
         // Instantiate the app
         AppFactory::setContainer($container);
-        return $app = AppFactory::create();
+        $app = AppFactory::create();
+        $container->set(App::class, $app); // register $app self.
 
+        return $app;
     }
 
 }

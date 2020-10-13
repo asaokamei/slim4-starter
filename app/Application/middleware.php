@@ -8,10 +8,10 @@ use Slim\Csrf\Guard;
 use Slim\Views\TwigMiddleware;
 
 if (!isset($app)) {
-    throw new BadMethodCallException();
+    return;
 }
 if (!$app instanceof App){
-    throw new BadMethodCallException();
+    return;
 }
 
 /**

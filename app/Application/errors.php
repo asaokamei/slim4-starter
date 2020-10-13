@@ -9,10 +9,10 @@ use Slim\App;
 
 
 if (!isset($app) || !isset($request)) {
-    throw new BadMethodCallException();
+    return;
 }
 if (!$app instanceof App || !$request instanceof ServerRequestInterface){
-    throw new BadMethodCallException();
+    return;
 }
 
 /**
