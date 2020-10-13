@@ -9,10 +9,10 @@ use Slim\App;
 use Slim\Interfaces\RouteCollectorProxyInterface as Group;
 
 if (!isset($app)) {
-    throw new BadMethodCallException();
+    return;
 }
 if (!$app instanceof App){
-    throw new BadMethodCallException();
+    return;
 }
 
 /**
