@@ -7,6 +7,7 @@ use App\Application\Container\BootEnv;
 use App\Application\Handlers\BootHandlers;
 use App\Application\Middleware\BootMiddleware;
 use Exception;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
 use Slim\Factory\AppFactory;
@@ -105,6 +106,8 @@ class AppBuilder
 
         // Instantiate the app
         AppFactory::setContainer($container);
+        AppFactory::setResponseFactory($container->get(ResponseFactoryInterface::class));
+
         $app = AppFactory::create();
         $container->set(App::class, $app); // register $app self.
 

@@ -28,13 +28,13 @@ class TwigExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('url_for', [TwigRuntimeExtension::class, 'urlFor']),
-            new TwigFunction('full_url_for', [TwigRuntimeExtension::class, 'fullUrlFor']),
-            new TwigFunction('is_current_url', [TwigRuntimeExtension::class, 'isCurrentUrl']),
-            new TwigFunction('current_url', [TwigRuntimeExtension::class, 'getCurrentUrl']),
-            new TwigFunction('get_uri', [TwigRuntimeExtension::class, 'getUri']),
-            new TwigFunction('base_path', [TwigRuntimeExtension::class, 'getBasePath']),
-            new TwigFunction('hidden_csrf_token', [TwigRuntimeExtension::class, 'getCsrfTokens']),
+            new TwigFunction('url_for', [TwigFunctions::class, 'urlFor']),
+            new TwigFunction('full_url_for', [TwigFunctions::class, 'fullUrlFor']),
+            new TwigFunction('is_current_url', [TwigFunctions::class, 'isCurrentUrl']),
+            new TwigFunction('current_url', [TwigFunctions::class, 'getCurrentUrl']),
+            new TwigFunction('get_uri', [TwigFunctions::class, 'getUri']),
+            new TwigFunction('base_path', [TwigFunctions::class, 'getBasePath']),
+            new TwigFunction('hidden_csrf_token', [TwigFunctions::class, 'getCsrfTokens']),
         ];
     }
 }

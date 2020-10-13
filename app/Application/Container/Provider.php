@@ -7,7 +7,9 @@ namespace App\Application\Container;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
+use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Log\LoggerInterface;
 use Slim\Csrf\Guard;
 use Slim\Views\Twig;
@@ -17,11 +19,14 @@ class Provider
     public function getDefinitions(): array
     {
         $list = [
+            ResponseFactoryInterface::class => \DI\get(Psr17Factory::class),
+            Psr17Factory::class => 'getPsr17Factory',
             LoggerInterface::class => 'getMonolog',
             Twig::class => 'getTwig',
+            Guard::class => 'getCsrfGuard',
 
             'view' => \DI\get(Twig::class),
-            'csrf' => 'getCsrfGuard'
+            'csrf' => \DI\get(Guard::class),
         ];
         return $this->prepare($list);
     }
@@ -38,9 +43,14 @@ class Provider
         return $list;
     }
 
+    private function getPsr17Factory()
+    {
+        return new Psr17Factory();
+    }
+
     private function getCsrfGuard(ContainerInterface $c)
     {
-        $guard = new Guard($responseFactory, '_csrf');
+        $guard = new Guard($c->get(ResponseFactoryInterface::class), '_csrf');
         $guard->setPersistentTokenMode(true);
 
         return $guard;

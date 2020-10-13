@@ -51,43 +51,12 @@ class TwigMiddleware implements MiddlewareInterface
     public static function createFromContainer(App $app, string $containerKey = 'view'): self
     {
         $container = $app->getContainer();
-        if ($container === null) {
-            throw new RuntimeException('The app does not have a container.');
-        }
-        if (!$container->has($containerKey)) {
-            throw new RuntimeException(
-                "The specified container key does not exist: $containerKey"
-            );
-        }
-
         $twig = $container->get($containerKey);
-        if (!($twig instanceof Twig)) {
-            throw new RuntimeException(
-                "Twig instance could not be resolved via container key: $containerKey"
-            );
-        }
 
         return new self(
             $twig,
             $app->getRouteCollector()->getRouteParser(),
             $app->getBasePath()
-        );
-    }
-
-    /**
-     * @param App    $app
-     * @param Twig   $twig
-     * @param string $attributeName
-     *
-     * @return TwigMiddleware
-     */
-    public static function create(App $app, Twig $twig, string $attributeName = 'view'): self
-    {
-        return new self(
-            $twig,
-            $app->getRouteCollector()->getRouteParser(),
-            $app->getBasePath(),
-            $attributeName
         );
     }
 
