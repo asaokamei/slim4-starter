@@ -1,5 +1,5 @@
 <?php
-namespace App\Controllers\Forms;
+namespace App\Controllers\Samples;
 
 
 use App\Controllers\AbstractController;
@@ -18,7 +18,7 @@ class FormController extends AbstractController
      */
     protected function onGet(): ResponseInterface
     {
-        return $this->view('form.twig', [
+        return $this->view('samples/form.twig', [
             'form' => 'not yet ready',
             'csrf' => [$this->csrfTokenName(), $this->csrfTokenValue()],
         ]);

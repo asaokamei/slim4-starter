@@ -1,5 +1,5 @@
 <?php
-namespace App\Controllers\Welcome;
+namespace App\Controllers\Samples;
 
 
 use App\Controllers\AbstractController;
@@ -19,7 +19,7 @@ class WelcomeController extends AbstractController
      */
     protected function onGet(string $name): ResponseInterface
     {
-        return $this->view('welcome.twig', [
+        return $this->view('samples/welcome.twig', [
             'name' => $name,
         ]);
     }
