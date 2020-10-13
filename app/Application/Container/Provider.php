@@ -9,6 +9,7 @@ use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use Slim\Csrf\Guard;
 use Slim\Views\Twig;
 
 class Provider
@@ -20,6 +21,7 @@ class Provider
             Twig::class => 'getTwig',
 
             'view' => \DI\get(Twig::class),
+            'csrf' => 'getCsrfGuard'
         ];
         return $this->prepare($list);
     }
@@ -34,6 +36,14 @@ class Provider
             }
         }
         return $list;
+    }
+
+    private function getCsrfGuard(ContainerInterface $c)
+    {
+        $guard = new Guard($responseFactory, '_csrf');
+        $guard->setPersistentTokenMode(true);
+
+        return $guard;
     }
 
     private function getMonolog(ContainerInterface $c)
