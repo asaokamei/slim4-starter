@@ -36,15 +36,19 @@ class HttpErrorHandler extends ErrorHandler
         $statusCode = $this->exception->getCode();
 
         $response = $this->responseFactory->createResponse($statusCode);
-        $exception = $this->displayErrorDetails
-            ? $exception : null;
+
+        if ($this->displayErrorDetails) {
+            $whoops = new \Whoops\Run;
+            $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
+            $response->getBody()->write($whoops->handleException($exception));
+            return $response;
+        }
         $title = $exception instanceof HttpException
             ? $exception->getTitle()
             : get_class($exception);
         try {
             return $this->twig->render($response, 'error.twig', [
                 'title' => $title,
-                'exception' => $exception,
             ]);
         } catch (Throwable $e) {
             $response->getBody()->write('<h1>error</h1>');
