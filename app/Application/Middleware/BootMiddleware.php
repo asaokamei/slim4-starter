@@ -6,7 +6,6 @@ namespace App\Application\Middleware;
 
 use Slim\App;
 use Slim\Csrf\Guard;
-use Slim\Views\TwigMiddleware;
 
 class BootMiddleware
 {
@@ -20,13 +19,8 @@ class BootMiddleware
         $responseFactory = $app->getResponseFactory();
 
         // Register Middleware To Be Executed On All Routes
-        $storage = null;
-        $app->add(new Guard($responseFactory,
-            '_csrf',
-            $storage,
-            null,
-            200,
-            16,
-            true));
+        $guard = new Guard($responseFactory, '_csrf');
+        $guard->setPersistentTokenMode(true);
+        $app->add($guard);
     }
 }
