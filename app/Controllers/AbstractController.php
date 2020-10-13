@@ -82,7 +82,7 @@ abstract class AbstractController
             $position = $arg->getPosition();
             $varName = $arg->getName();
             $optionValue = $arg->isOptional() ? $arg->getDefaultValue() : null;
-            $value = isset($params[$varName]) ? $params[$varName] : $optionValue;
+            $value = isset($this->args[$varName]) ? $this->args[$varName] : $optionValue;
             $arguments[$position] = $value;
         }
         $method->setAccessible(true);
