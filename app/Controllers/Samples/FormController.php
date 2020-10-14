@@ -22,7 +22,6 @@ class FormController extends AbstractController
     {
         return $this->view('samples/form.twig', [
             'form' => 'not yet ready',
-            'csrf' => [$this->csrfTokenName(), $this->csrfTokenValue()],
         ]);
     }
 
