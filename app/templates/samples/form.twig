@@ -7,8 +7,7 @@
 <p>This is form sample...</p>
 
 {{ form }}
-<input type="hidden" name="_csrf_name" value="{{ csrf[0] }}">
-<input type="hidden" name="_csrf_value" value="{{ csrf[1] }}">
+{{ hidden_csrf_token() }}
 
 {% if data is defined %}
     <h2>form submitted...</h2>

@@ -135,17 +135,7 @@ abstract class AbstractController
         $view = $this->app->getContainer()->get(Twig::class);
         return $view->render($this->response, $template, $data);
     }
-
-    protected function csrfTokenName(): string
-    {
-        return $this->request->getAttribute('_csrf_name');
-    }
-
-    protected function csrfTokenValue(): string
-    {
-        return $this->request->getAttribute('_csrf_value');
-    }
-
+    
     /**
      * @param string $name
      * @return mixed
