@@ -1,7 +1,9 @@
 Slim4 and PHP-DI Starter Project
 ================================
 
-A starter project for, 
+A starter project for ordinary web sites, based on [slim/slim-skeleton](https://github.com/slimphp/Slim-Skeleton).
+
+Uses, 
 
 - Slim4,
 - PHP-DI,
@@ -9,13 +11,26 @@ A starter project for,
 - monolog,
 - Twig (using `slim/twig-view`)
 
-with sample directory. 
-
-based on [slim/slim-skeleton](https://github.com/slimphp/Slim-Skeleton).
-
 ### License
 
 MIT License
+
+### Demo
+
+installation.
+
+```bash
+git clone https://github.com/asaokamei/slim4-starter
+cd slim4-starter
+composer install
+```
+
+run demo, after installation.
+
+```bash
+cd public
+php -S 127.0.0.1:8000 index.php
+```
 
 AbstractController
 -----------
@@ -88,7 +103,7 @@ Twig Functions
 
 additional functions for Twig. 
 
-### hidden tag for CSRF tokens
+#### hidden tag for CSRF tokens
 
 CSRF tokens in hidden tag for [Slim-Csrf](https://github.com/slimphp/Slim-Csrf). 
 
@@ -97,37 +112,37 @@ CSRF tokens in hidden tag for [Slim-Csrf](https://github.com/slimphp/Slim-Csrf).
 ```
 
 
-Functions from slim/twig-view.
+### More Functions from slim/twig-view.
 
-### url_for()
+#### url_for()
 
 Get the url for a named route.
 
 `{{ url_for(string $routeName, array $data = [], array $queryParams = []) }}`
 
-### full_url_for()
+#### full_url_for()
 
 Get the full url for a named route. 
 
 `{{ full_url_for(string $routeName, array $data = [], array $queryParams = []) }}`
 
-### is_current_url()
+#### is_current_url()
 
 `{{ is_current_url(string $routeName, array $data = []) }}`
 
-### current_url()
+#### current_url()
 
 Get current path on given Uri.
 
 `{{ current_url(bool $withQueryString = false) }}`
 
-### get_uri()
+#### get_uri()
 
 Get `Psr\Http\Message\UriInterface` object.
 
 `{{ get_uri() }}`
 
-### base_path()
+#### base_path()
 
 Get base path string.
 
