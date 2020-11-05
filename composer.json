@@ -1,5 +1,5 @@
 {
-    "name": "asaokamei/slime-php",
+    "name": "asaokamei/slim4-starter",
     "description": "my starter project for Slim4 + PHP-DI .",
     "type": "project",
     "license": "MIT",
