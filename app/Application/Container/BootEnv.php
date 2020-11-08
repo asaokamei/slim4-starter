@@ -3,19 +3,21 @@ declare(strict_types=1);
 
 namespace App\Application\Container;
 
+use Dotenv\Dotenv;
+
 class BootEnv
 {
     const APP_ENV = 'APP_ENV';
 
     /**
-     * @var false|mixed
+     * @var false
      */
     private $useCache = false;
 
     /**
      * @var string
      */
-    private $envFile;
+    private $envDir;
 
     /**
      * @var string
@@ -32,10 +34,10 @@ class BootEnv
      * @param string $cacheDir
      * @return static
      */
-    public static function forge($rootDir, $cacheDir): self
+    public static function forge(string $rootDir, string $cacheDir): self
     {
         $self = new self();
-        $self->envFile = $rootDir . '/.env';
+        $self->envDir = $rootDir;
         $self->cacheFile = $cacheDir . '/env.cached.json';
 
         return $self;
@@ -48,7 +50,7 @@ class BootEnv
 
     private function getSettingsFromCache(): array
     {
-        if (file_exists($this->cacheFile) && $this->isCacheNewer($this->cacheFile, $this->envFile)) {
+        if (file_exists($this->cacheFile) && $this->isCacheNewer($this->cacheFile, $this->envDir)) {
             return json_decode(file_get_contents($this->cacheFile));
         }
         $settings = $this->parseEnvFile();
@@ -79,10 +81,10 @@ class BootEnv
     }
 
     /**
-     * @param false|mixed $useCache
+     * @param false $useCache
      * @return static
      */
-    public function setUseCache($useCache)
+    public function setUseCache(bool $useCache)
     {
         $this->useCache = $useCache;
         return $this;
@@ -98,7 +100,9 @@ class BootEnv
      */
     private function parseEnvFile(): array
     {
-        $settings = parse_ini_file($this->envFile);
+        $env = Dotenv::createImmutable($this->envDir);
+        $settings = $env->load();
+        $env->required([self::APP_ENV]);
 
         $this->environment = strtolower($settings[self::APP_ENV] ?? 'production');
 

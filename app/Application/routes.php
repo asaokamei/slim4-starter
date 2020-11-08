@@ -20,7 +20,10 @@ if (!$app instanceof App){
  * set up routes
  */
 $app->get('/', function (Request $request, Response $response) {
-    return $this->get('view')->render($response, 'hello.twig');
+    return $this->get('view')->render($response, 'hello.twig', [
+        'app_name' => $_ENV['APP_NAME'] ?? 'no-app-name-is-set!',
+        'settings' => $this->get('settings'),
+    ]);
 })->setName('hello');
 
 /**
@@ -28,7 +31,7 @@ $app->get('/', function (Request $request, Response $response) {
  */
 $app->group('/samples', function (Group $group) {
     $group->any('/form', FormController::class)->setName('form');
-    $group->any('/welcome/{name}', WelcomeController::class)->setName('welcome');
+    $group->any('/welcome/{name:.*}', WelcomeController::class)->setName('welcome');
 });
 
 /**

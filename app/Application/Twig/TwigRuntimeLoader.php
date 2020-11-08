@@ -53,6 +53,9 @@ class TwigRuntimeLoader implements RuntimeLoaderInterface
         if (TwigFunctions::class === $class) {
             return new $class($this->routeParser, $this->request, $this->basePath);
         }
+        if (TwigFilters::class === $class) {
+            return new $class();
+        }
 
         return null;
     }

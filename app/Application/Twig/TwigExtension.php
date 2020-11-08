@@ -43,4 +43,11 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('flashNotices', [TwigFunctions::class, 'getFlashNotices']),
         ];
     }
+
+    public function getFilters()
+    {
+        return [
+            new TwigFilter('arrayToString', [TwigFilters::class, 'filterArrayToString'])
+        ];
+    }
 }
