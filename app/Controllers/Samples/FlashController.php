@@ -36,6 +36,6 @@ class FlashController extends AbstractController
     {
         $this->flashNotice('This notice is set in onBack method.');
         $this->flashMessage('This message is set in onBack method.');
-        return $this->redirectToRoute('flash');
+        return $this->redirectToRoute('flashes');
     }
 }
