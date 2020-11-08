@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace App\Application\Twig;
 
 use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 class TwigExtension extends AbstractExtension
@@ -34,7 +35,12 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('current_url', [TwigFunctions::class, 'getCurrentUrl']),
             new TwigFunction('get_uri', [TwigFunctions::class, 'getUri']),
             new TwigFunction('base_path', [TwigFunctions::class, 'getBasePath']),
+            /**
+             * new functions
+             */
             new TwigFunction('hidden_csrf_token', [TwigFunctions::class, 'getCsrfTokens']),
+            new TwigFunction('flashMessages', [TwigFunctions::class, 'getFlashMessages']),
+            new TwigFunction('flashNotices', [TwigFunctions::class, 'getFlashNotices']),
         ];
     }
 }

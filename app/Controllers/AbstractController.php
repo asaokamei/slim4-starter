@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Application\Middleware\SessionMiddleware;
+use Aura\Session\Segment;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionException;
@@ -11,9 +13,6 @@ use Slim\App;
 use Slim\Exception\HttpBadRequestException;
 use Slim\Exception\HttpMethodNotAllowedException;
 use Slim\Views\Twig;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
 
 abstract class AbstractController
 {
@@ -38,6 +37,12 @@ abstract class AbstractController
     private $app;
 
     /**
+     * @var Segment
+     */
+
+    private $session;
+
+    /**
      * @param App|null $app
      */
     public function __construct(App $app)
@@ -50,19 +55,21 @@ abstract class AbstractController
      * @param ResponseInterface $response
      * @param array $args
      * @return ResponseInterface
-     * @throws HttpMethodNotAllowedException|ReflectionException
+     * @throws HttpMethodNotAllowedException
+     * @throws ReflectionException
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $args): ResponseInterface
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $this->request = $request;
         $this->response = $response;
         $this->args = $args + $request->getQueryParams();
+        $this->session = $request->getAttribute(SessionMiddleware::SESSION_NAME);
         $this->populateArgs();
 
-        $method = 'on' . ($request->getAttribute('_method') ?? $request->getMethod());
         if (method_exists($this, 'action')) {
             return $this->_invokeMethod('action');
         }
+        $method = 'on' . $this->determineMethod();
         if (method_exists($this, $method)) {
             return $this->_invokeMethod($method);
         }
@@ -70,11 +77,22 @@ abstract class AbstractController
     }
 
     /**
+     * Override this method to change which method to invoke.
+     * Default is to use $_POST['_method'], or http method.
+     *
+     * @return string
+     */
+    protected function determineMethod(): string
+    {
+        return $this->request->getParsedBody()['_method'] ?? $this->request->getMethod();
+    }
+
+    /**
      * @param string $method
      * @return mixed|ResponseInterface
      * @throws ReflectionException
      */
-    private function _invokeMethod($method)
+    private function _invokeMethod(string $method)
     {
         $method = new ReflectionMethod($this, $method);
         $parameters = $method->getParameters();
@@ -93,7 +111,7 @@ abstract class AbstractController
     /**
      * alternate input arguments.
      * add 'modKeyName' method to change its value.
-     * ex: user_id -> argUserId
+     * ex: user_id: '100' -> 'User100'
      *
      * return a value to override the original value.
      * or, return an associated array to add new key/value pair.
@@ -126,13 +144,13 @@ abstract class AbstractController
      * @param string $template
      * @param array $data
      * @return ResponseInterface
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
+     * @noinspection PhpDocMissingThrowsInspection
      */
-    protected function view(string $template, array $data = []): ResponseInterface
+    public function view(string $template, array $data = []): ResponseInterface
     {
+        $this->session->clearFlash(); // rendering a view means ...
         $view = $this->app->getContainer()->get(Twig::class);
+        /** @noinspection PhpUnhandledExceptionInspection */
         return $view->render($this->response, $template, $data);
     }
 
@@ -142,12 +160,41 @@ abstract class AbstractController
      * @throws HttpBadRequestException
      * @noinspection PhpUnused
      */
-    protected function resolveArg(string $name)
+    public function resolveArg(string $name)
     {
         if (!isset($this->args[$name])) {
             throw new HttpBadRequestException($this->request, "Could not resolve argument `{$name}`.");
         }
 
         return $this->args[$name];
+    }
+
+    public function session(): Segment
+    {
+        return $this->session;
+    }
+
+    public function flashMessage($message)
+    {
+        $messages = (array) $this->session->getFlash('messages', []);
+        $messages[] = $message;
+        $this->session->setFlashNow('messages', $messages);
+    }
+
+    public function flashNotice($message)
+    {
+        $messages = (array) $this->session->getFlash('notices', []);
+        $messages[] = $message;
+        $this->session->setFlashNow('notices', $messages);
+    }
+
+    public function redirectToRoute(string $string, $options = [], $query = []): ResponseInterface
+    {
+        $routeParser = $this->app->getRouteCollector()->getRouteParser();
+        $url = $routeParser->urlFor($string, $options, $query);
+
+        return $this->response
+            ->withHeader('Location', $url)
+            ->withStatus(302);
     }
 }
