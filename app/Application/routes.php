@@ -32,12 +32,5 @@ $app->get('/', function (Request $request, Response $response) {
 $app->group('/samples', function (Group $group) {
     $group->any('/form', FormController::class)->setName('form');
     $group->any('/welcome/{name:.*}', WelcomeController::class)->setName('welcome');
-});
-
-/**
- * flash samples
- */
-$app->group('/flashes', function (Group $group) {
-    $group->get('/', FlashController::class)->setName('flash');
-    $group->get('/{method}', FlashController::class)->setName('flashes');
+    $group->any('/flashes/[{method}]', FlashController::class)->setName('flashes');
 });
