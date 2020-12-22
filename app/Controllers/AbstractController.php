@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Application\Middleware\AppMiddleware;
+use App\Application\Middleware\CsRfGuard;
 use App\Application\Middleware\SessionMiddleware;
 use Aura\Session\Segment;
 use Psr\Http\Message\ResponseInterface;
@@ -43,14 +45,6 @@ abstract class AbstractController
     private $session;
 
     /**
-     * @param App|null $app
-     */
-    public function __construct(App $app)
-    {
-        $this->app = $app;
-    }
-
-    /**
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
      * @param array $args
@@ -62,6 +56,7 @@ abstract class AbstractController
     {
         $this->request = $request;
         $this->response = $response;
+        $this->app = $request->getAttribute(AppMiddleware::APP_NAME);
         $this->args = $args + $request->getQueryParams();
         $this->session = $request->getAttribute(SessionMiddleware::SESSION_NAME);
         $this->populateArgs();
@@ -89,10 +84,10 @@ abstract class AbstractController
 
     /**
      * @param string $method
-     * @return mixed|ResponseInterface
+     * @return ResponseInterface
      * @throws ReflectionException
      */
-    private function _invokeMethod(string $method)
+    private function _invokeMethod(string $method): ResponseInterface
     {
         $method = new ReflectionMethod($this, $method);
         $parameters = $method->getParameters();
@@ -190,11 +185,23 @@ abstract class AbstractController
 
     public function redirectToRoute(string $string, $options = [], $query = []): ResponseInterface
     {
-        $routeParser = $this->app->getRouteCollector()->getRouteParser();
-        $url = $routeParser->urlFor($string, $options, $query);
+        $url = $this->urlFor($string, $options, $query);
 
         return $this->response
             ->withHeader('Location', $url)
             ->withStatus(302);
+    }
+
+    public function urlFor(string $string, $options = [], $query = []): string
+    {
+        $routeParser = $this->app->getRouteCollector()->getRouteParser();
+        return $routeParser->urlFor($string, $options, $query);
+    }
+
+    public function clearCsRfToken()
+    {
+        /** @var CsRfGuard $guard */
+        $guard = $this->app->getContainer()->get(CsRfGuard::class);
+        $guard->clearLastTokenFromRequest();
     }
 }
