@@ -5,7 +5,6 @@ namespace App\Application\Middleware;
 
 
 use Slim\App;
-use Slim\Csrf\Guard;
 
 class BootMiddleware
 {
@@ -15,6 +14,9 @@ class BootMiddleware
 
         $app->add(SessionMiddleware::class);
 
-        $app->add(Guard::class);
+        $app->add(CsRfGuard::class);
+
+        $app->add(AppMiddleware::class);
+
     }
 }
