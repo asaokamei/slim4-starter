@@ -15,9 +15,6 @@ class WelcomeController extends AbstractController
     /**
      * @param string $name
      * @return ResponseInterface
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
      */
     protected function onGet(string $name): ResponseInterface
     {
