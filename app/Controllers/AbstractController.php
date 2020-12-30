@@ -141,7 +141,7 @@ abstract class AbstractController
      * @return ResponseInterface
      * @noinspection PhpDocMissingThrowsInspection
      */
-    public function view(string $template, array $data = []): ResponseInterface
+    protected function view(string $template, array $data = []): ResponseInterface
     {
         $this->session->clearFlash(); // rendering a view means ...
         $view = $this->app->getContainer()->get(Twig::class);
@@ -155,7 +155,7 @@ abstract class AbstractController
      * @throws HttpBadRequestException
      * @noinspection PhpUnused
      */
-    public function resolveArg(string $name)
+    protected function resolveArg(string $name)
     {
         if (!isset($this->args[$name])) {
             throw new HttpBadRequestException($this->request, "Could not resolve argument `{$name}`.");
@@ -164,26 +164,26 @@ abstract class AbstractController
         return $this->args[$name];
     }
 
-    public function session(): Segment
+    protected function session(): Segment
     {
         return $this->session;
     }
 
-    public function flashMessage($message)
+    protected function flashMessage($message)
     {
         $messages = (array) $this->session->getFlash('messages', []);
         $messages[] = $message;
         $this->session->setFlashNow('messages', $messages);
     }
 
-    public function flashNotice($message)
+    protected function flashNotice($message)
     {
         $messages = (array) $this->session->getFlash('notices', []);
         $messages[] = $message;
         $this->session->setFlashNow('notices', $messages);
     }
 
-    public function redirectToRoute(string $string, $options = [], $query = []): ResponseInterface
+    protected function redirectToRoute(string $string, $options = [], $query = []): ResponseInterface
     {
         $url = $this->urlFor($string, $options, $query);
 
@@ -192,13 +192,13 @@ abstract class AbstractController
             ->withStatus(302);
     }
 
-    public function urlFor(string $string, $options = [], $query = []): string
+    protected function urlFor(string $string, $options = [], $query = []): string
     {
         $routeParser = $this->app->getRouteCollector()->getRouteParser();
         return $routeParser->urlFor($string, $options, $query);
     }
 
-    public function clearCsRfToken()
+    protected function clearCsRfToken()
     {
         /** @var CsRfGuard $guard */
         $guard = $this->app->getContainer()->get(CsRfGuard::class);

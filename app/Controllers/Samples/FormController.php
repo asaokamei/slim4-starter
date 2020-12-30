@@ -14,9 +14,6 @@ class FormController extends AbstractController
 {
     /**
      * @return ResponseInterface
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
      */
     protected function onGet(): ResponseInterface
     {

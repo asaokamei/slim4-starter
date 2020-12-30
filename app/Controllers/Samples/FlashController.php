@@ -5,6 +5,7 @@ namespace App\Controllers\Samples;
 
 
 use App\Controllers\AbstractController;
+use Psr\Http\Message\ResponseInterface;
 
 class FlashController extends AbstractController
 {
@@ -16,14 +17,14 @@ class FlashController extends AbstractController
         return 'get';
     }
 
-    public function onGet()
+    public function onGet(): ResponseInterface
     {
         $this->flashNotice('This notice is set in onGet method.');
         $this->flashMessage('This message is set in onGet method.');
         return $this->view('samples/flash.twig', []);
     }
 
-    public function onPage()
+    public function onPage(): ResponseInterface
     {
         $this->flashNotice('This notice is set in onPage method.');
         $this->flashMessage('This message is set in onPage method.');
@@ -32,7 +33,7 @@ class FlashController extends AbstractController
         ]);
     }
 
-    public function onBack()
+    public function onBack(): ResponseInterface
     {
         $this->flashNotice('This notice is set in onBack method.');
         $this->flashMessage('This message is set in onBack method.');
