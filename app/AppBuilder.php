@@ -76,7 +76,7 @@ class AppBuilder
 
     private function routes(App $app): App
     {
-        require __DIR__ . '/Application/routes.php';
+        require __DIR__ . '/routes.php';
 
         return $app;
     }
