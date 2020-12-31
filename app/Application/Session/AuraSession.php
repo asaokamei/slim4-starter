@@ -30,7 +30,7 @@ class AuraSession implements SessionInterface
         $this->segment = $this->session->getSegment('app');
     }
 
-    public function guardCsRf(string $token): bool
+    public function validateCsRfToken(string $token): bool
     {
         return $this->session->getCsrfToken()->isValid($token);
     }

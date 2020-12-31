@@ -5,7 +5,6 @@ namespace App;
 
 use App\Application\Container\BootContainer;
 use App\Application\Container\BootEnv;
-use App\Application\Middleware\BootMiddleware;
 use Exception;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;

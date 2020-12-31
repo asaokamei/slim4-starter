@@ -4,7 +4,9 @@ namespace App\Application\Session;
 
 interface SessionInterface
 {
-    public function guardCsRf(string $token): bool;
+    const POST_TOKEN_NAME = '_csrf_token';
+
+    public function validateCsRfToken(string $token): bool;
 
     public function getCsRfToken(): string;
 
