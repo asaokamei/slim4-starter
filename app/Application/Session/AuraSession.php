@@ -40,6 +40,11 @@ class AuraSession implements SessionInterface
         return $this->session->getCsrfToken()->getValue();
     }
 
+    public function regenerateCsRfToken(): void
+    {
+        $this->session->getCsrfToken()->regenerateValue();
+    }
+
     public function getFlash(string $key, $default = null)
     {
         return $this->segment->getFlash($key, $default);

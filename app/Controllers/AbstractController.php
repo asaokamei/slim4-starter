@@ -198,10 +198,8 @@ abstract class AbstractController
         return $routeParser->urlFor($string, $options, $query);
     }
 
-    protected function clearCsRfToken()
+    protected function regenerateCsRfToken()
     {
-        /** @var CsRfGuard $guard */
-        $guard = $this->app->getContainer()->get(CsRfGuard::class);
-        $guard->clearLastTokenFromRequest();
+        $this->session->regenerateCsRfToken();
     }
 }
