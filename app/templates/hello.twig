@@ -21,6 +21,7 @@
     <li><a href="{{ url_for('welcome', {name:"YourName"}) }}">welcome (change your_name)</a></li>
     <li><a href="{{ url_for('flashes') }}">flash samples.</a></li>
     <li><a href="/bad">not found error</a></li>
+    <li><a href="{{ url_for('nonExists') }}">calling a controller which does not exist</a></li>
 </ul>
 
     <h2>settings</h2>

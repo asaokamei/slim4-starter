@@ -33,4 +33,6 @@ $app->group('/samples', function (Group $group) {
     $group->any('/form', FormController::class)->setName('form');
     $group->any('/welcome/{name:.*}', WelcomeController::class)->setName('welcome');
     $group->any('/flashes/[{method}]', FlashController::class)->setName('flashes');
+    /** @noinspection PhpUndefinedClassInspection  this is an example route for calling non-existent controller */
+    $group->get('/nonExist', NonExistController::class)->setName('nonExists');
 });

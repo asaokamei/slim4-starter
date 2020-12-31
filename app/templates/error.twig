@@ -1,14 +1,79 @@
-{% extends('layouts/layout.html.twig') %}
+{#
+ # error.twig
+ #
+ # functions and filters that are created at RunTime, are not available!
+ #}
+<!Document html>
+<html lang="en">
+<head>
+    <title>Slim4 Starter</title>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: "Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif;
+            font-size: 16px;
+            margin: 0;
+        }
+        header {
+            margin: 0;
+            padding: 1rem;
+            border-bottom: 1px solid #cccccc;
+        }
+        a.header-title {
+            font-size: 2rem;
+            text-decoration: none;
+        }
+        div.contents {
+            margin: 1rem;
+        }
+        /*
+         * for flash messages
+         */
+        div.alert {
+            border: 1px solid gray;
+            padding: 1em;
+            border-radius: .5em;
+            margin: 1em;
+        }
+        div.alert p.alert-title {
+            margin: 0;
+            padding: 0;
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #666666;
+        }
+        div.alert-notice {
+            background-color: #f0cfcf;
+        }
+        div.alert-message {
+            background-color: #dff0df;
+        }
 
-{% block contents %}
+    </style>
+</head>
+<body>
+<header>
+    <a class="header-title" href="/">Slim4 Starter</a>
+</header>
 
+<div class="contents">
 <h1>Sorry!</h1>
 
-<p>sorry, we encountered some errors...</p>
+<p>We have encountered errors...</p>
 
 {% if title %}
     <p style="font-weight: bold;">{{ title|raw }}</p>
 {% endif %}
 
 
-{% endblock %}
+</div>
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<hr>
+<footer>
+
+</footer>
+
+</body>
+</html>

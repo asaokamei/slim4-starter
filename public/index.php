@@ -23,7 +23,7 @@ $request = ServerRequestCreatorFactory::create()
 
 $app = AppBuilder::forge(realpath(__DIR__.'/../'))
     ->setUseCache(false)
-    ->setShowError(true)
+    ->setShowError(false)
     ->build($request);
 
 // Run App & Emit Response
