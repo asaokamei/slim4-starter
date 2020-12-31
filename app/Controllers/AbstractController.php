@@ -6,7 +6,7 @@ namespace App\Controllers;
 use App\Application\Middleware\AppMiddleware;
 use App\Application\Middleware\CsRfGuard;
 use App\Application\Middleware\SessionMiddleware;
-use Aura\Session\Segment;
+use App\Application\Session\SessionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionException;
@@ -39,7 +39,7 @@ abstract class AbstractController
     private $app;
 
     /**
-     * @var Segment
+     * @var SessionInterface
      */
 
     private $session;
@@ -164,7 +164,7 @@ abstract class AbstractController
         return $this->args[$name];
     }
 
-    protected function session(): Segment
+    protected function session(): SessionInterface
     {
         return $this->session;
     }
@@ -173,14 +173,14 @@ abstract class AbstractController
     {
         $messages = (array) $this->session->getFlash('messages', []);
         $messages[] = $message;
-        $this->session->setFlashNow('messages', $messages);
+        $this->session->setFlash('messages', $messages);
     }
 
     protected function flashNotice($message)
     {
         $messages = (array) $this->session->getFlash('notices', []);
         $messages[] = $message;
-        $this->session->setFlashNow('notices', $messages);
+        $this->session->setFlash('notices', $messages);
     }
 
     protected function redirectToRoute(string $string, $options = [], $query = []): ResponseInterface

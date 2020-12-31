@@ -4,6 +4,9 @@ declare(strict_types=1);
 namespace App\Application\Container;
 
 
+use App\Application\Session\AuraSession;
+use App\Application\Session\SessionInterface;
+use Aura\Session\SessionFactory;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
@@ -25,6 +28,7 @@ class Provider
             LoggerInterface::class => 'getMonolog',
             Twig::class => 'getTwig',
             Guard::class => 'getCsrfGuard',
+            SessionInterface::class => 'getSession',
 
             'view' => get(Twig::class),
             'csrf' => get(Guard::class),
@@ -86,5 +90,10 @@ class Provider
             'cache' => $cacheDir,
             'auto_reload' => true,
         ]);
+    }
+
+    private function getSession(ContainerInterface $c)
+    {
+        return new AuraSession(new SessionFactory());
     }
 }
