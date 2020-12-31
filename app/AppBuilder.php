@@ -5,7 +5,6 @@ namespace App;
 
 use App\Application\Container\BootContainer;
 use App\Application\Container\BootEnv;
-use App\Application\Handlers\BootHandlers;
 use App\Application\Middleware\BootMiddleware;
 use Exception;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -53,12 +52,17 @@ class AppBuilder
         return $this;
     }
 
-    public function setUseCache($useCache)
+    public function setUseCache($useCache): AppBuilder
     {
         $this->useCache = $useCache;
         return $this;
     }
 
+    /**
+     * @param ServerRequestInterface|null $request
+     * @return App
+     * @throws Exception
+     */
     public function build(ServerRequestInterface $request = null): App
     {
         $app = $this->makeApp();
@@ -66,10 +70,7 @@ class AppBuilder
         BootMiddleware::setup($app);
 
         $this->routes($app);
-
-        if ($request) {
-            BootHandlers::setup($app, $request);
-        }
+        $this->setup($app, $request);
 
         return $app;
     }
@@ -77,6 +78,14 @@ class AppBuilder
     private function routes(App $app): App
     {
         require __DIR__ . '/routes.php';
+
+        return $app;
+    }
+
+    /** @noinspection PhpUnusedParameterInspection */
+    private function setup(App $app, ServerRequestInterface $request = null): App
+    {
+        require __DIR__ . '/setup.php';
 
         return $app;
     }
