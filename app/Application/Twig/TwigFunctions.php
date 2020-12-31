@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace App\Application\Twig;
 
 use App\Application\Middleware\SessionMiddleware;
-use Aura\Session\Segment;
+use App\Application\Session\SessionInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Interfaces\RouteParserInterface;
 use Slim\Views\TwigRuntimeExtension;
@@ -48,7 +48,7 @@ END_TAGS;
      */
     public function getFlashMessages()
     {
-        /** @var Segment $session */
+        /** @var SessionInterface $session */
         $session = $this->request->getAttribute(SessionMiddleware::SESSION_NAME);
         return (array) ($session->getFlash('messages') ?? []);
     }
@@ -58,7 +58,7 @@ END_TAGS;
      */
     public function getFlashNotices()
     {
-        /** @var Segment $session */
+        /** @var SessionInterface $session */
         $session = $this->request->getAttribute(SessionMiddleware::SESSION_NAME);
         return (array) ($session->getFlash('notices') ?? []);
     }
