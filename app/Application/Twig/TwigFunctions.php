@@ -21,32 +21,41 @@ class TwigFunctions extends TwigRuntimeExtension
      * @var ServerRequestInterface
      */
     private $request;
+    /**
+     * @var SessionInterface
+     */
+    private $session;
 
     /**
      * @param RouteParserInterface $routeParser Route parser
      * @param ServerRequestInterface $request Uri
+     * @param SessionInterface $session
      * @param string $basePath Base path
      */
-    public function __construct(RouteParserInterface $routeParser, ServerRequestInterface $request, string $basePath = '')
-    {
+    public function __construct(
+        RouteParserInterface $routeParser,
+        ServerRequestInterface $request,
+        SessionInterface $session,
+        string $basePath = ''
+    ) {
         parent::__construct($routeParser, $request->getUri(), $basePath);
         $this->request = $request;
+        $this->session = $session;
     }
 
-    public function getCsrfTokens()
+    public function getCsrfTokens(): string
     {
-        $name = $this->request->getAttribute('csrf_name');
-        $value = $this->request->getAttribute('csrf_value');
+        $name = SessionInterface::POST_TOKEN_NAME;
+        $value = $this->session->getCsRfToken();
         return <<< END_TAGS
-<input type="hidden" name="csrf_name" value="{$name}">
-<input type="hidden" name="csrf_value" value="{$value}">
+<input type="hidden" name="{$name}" value="{$value}">
 END_TAGS;
     }
 
     /**
      * @return string[]
      */
-    public function getFlashMessages()
+    public function getFlashMessages(): array
     {
         /** @var SessionInterface $session */
         $session = $this->request->getAttribute(SessionMiddleware::SESSION_NAME);
@@ -56,7 +65,7 @@ END_TAGS;
     /**
      * @return string[]
      */
-    public function getFlashNotices()
+    public function getFlashNotices(): array
     {
         /** @var SessionInterface $session */
         $session = $this->request->getAttribute(SessionMiddleware::SESSION_NAME);
