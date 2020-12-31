@@ -35,11 +35,11 @@ class TwigFunctions extends TwigRuntimeExtension
 
     public function getCsrfTokens()
     {
-        $name = $this->request->getAttribute('_csrf_name');
-        $value = $this->request->getAttribute('_csrf_value');
+        $name = $this->request->getAttribute('csrf_name');
+        $value = $this->request->getAttribute('csrf_value');
         return <<< END_TAGS
-<input type="hidden" name="_csrf_name" value="{$name}">
-<input type="hidden" name="_csrf_value" value="{$value}">
+<input type="hidden" name="csrf_name" value="{$name}">
+<input type="hidden" name="csrf_value" value="{$value}">
 END_TAGS;
     }
 
