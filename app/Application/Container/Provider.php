@@ -55,7 +55,7 @@ class Provider
 
     private function getCsrfGuard(ContainerInterface $c)
     {
-        $guard = new Guard($c->get(ResponseFactoryInterface::class), '_csrf');
+        $guard = new Guard($c->get(ResponseFactoryInterface::class));
         $guard->setPersistentTokenMode(true);
 
         return $guard;
