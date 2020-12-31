@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Application\Middleware;
 
+use App\Application\Session\SessionInterface;
 use Aura\Session\SessionFactory;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -14,13 +15,13 @@ class SessionMiddleware implements Middleware
     const SESSION_NAME = 'session';
 
     /**
-     * @var SessionFactory
+     * @var SessionInterface
      */
-    private $sessionFactory;
+    private $session;
 
-    public function __construct(SessionFactory $sessionFactory)
+    public function __construct(SessionInterface $session)
     {
-        $this->sessionFactory = $sessionFactory;
+        $this->session = $session;
     }
 
     /**
@@ -31,10 +32,8 @@ class SessionMiddleware implements Middleware
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
-        $session = $this->sessionFactory->newInstance($_COOKIE);
-        $segment = $session->getSegment('app');
 
-        $request = $request->withAttribute(self::SESSION_NAME, $segment);
+        $request = $request->withAttribute(self::SESSION_NAME, $this->session);
 
         return $handler->handle($request);
     }
