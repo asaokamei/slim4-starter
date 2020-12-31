@@ -16,8 +16,6 @@ class BootHandlers
      */
     public static function setup(App $app, ServerRequestInterface $request)
     {
-        $app->add(SessionMiddleware::class);
-
         /** @var bool $displayErrorDetails */
         $displayErrorDetails = $app->getContainer()->get('settings')['displayErrorDetails'];
 
