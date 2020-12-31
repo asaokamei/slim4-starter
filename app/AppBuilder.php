@@ -67,27 +67,29 @@ class AppBuilder
     {
         $app = $this->makeApp();
 
-        BootMiddleware::setup($app);
-
+        $this->middleware($app);
         $this->routes($app);
         $this->setup($app, $request);
 
         return $app;
     }
 
-    private function routes(App $app): App
+    /** @noinspection PhpUnusedParameterInspection */
+    private function middleware(App $app)
     {
-        require __DIR__ . '/routes.php';
-
-        return $app;
+        require __DIR__ . '/middleware.php';
     }
 
     /** @noinspection PhpUnusedParameterInspection */
-    private function setup(App $app, ServerRequestInterface $request = null): App
+    private function routes(App $app)
+    {
+        require __DIR__ . '/routes.php';
+    }
+
+    /** @noinspection PhpUnusedParameterInspection */
+    private function setup(App $app, ServerRequestInterface $request = null)
     {
         require __DIR__ . '/setup.php';
-
-        return $app;
     }
 
     /**
