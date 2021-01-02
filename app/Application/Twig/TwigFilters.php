@@ -8,12 +8,12 @@ use Twig\Markup;
 
 class TwigFilters
 {
-    public function filterArrayToString(array $array)
+    public function filterArrayToString(array $array): Markup
     {
         return new Markup($this->arrayToString($array), 'UTF-8');
     }
 
-    private function arrayToString($value)
+    private function arrayToString($value): string
     {
         if (is_array($value)) {
             $list = '';

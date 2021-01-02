@@ -57,9 +57,7 @@ END_TAGS;
      */
     public function getFlashMessages(): array
     {
-        /** @var SessionInterface $session */
-        $session = $this->request->getAttribute(SessionMiddleware::SESSION_NAME);
-        return (array) ($session->getFlash('messages') ?? []);
+        return (array) ($this->session->getFlash('messages') ?? []);
     }
 
     /**
@@ -67,8 +65,6 @@ END_TAGS;
      */
     public function getFlashNotices(): array
     {
-        /** @var SessionInterface $session */
-        $session = $this->request->getAttribute(SessionMiddleware::SESSION_NAME);
-        return (array) ($session->getFlash('notices') ?? []);
+        return (array) ($this->session->getFlash('notices') ?? []);
     }
 }
