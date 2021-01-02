@@ -10,6 +10,9 @@ Uses,
 - nyholm/psr7,
 - monolog,
 - Twig (using `slim/twig-view`)
+- Aura/Session
+- filp/whoops
+- vlucas/phpdotenv
 
 ### License
 
@@ -51,8 +54,8 @@ use App\Controllers\AbstractController;
 
 class WelcomeController extends AbstractController
 {
-    public function action() {} // <- always executed
-    public function onPost() {}
+    public function action() {} // <- always executed, or
+    public function onMethod() {} // <- executed based on HTTP method
 }
 ```
 
@@ -103,47 +106,40 @@ Twig Functions
 
 additional functions for Twig. 
 
-#### hidden tag for CSRF tokens
+#### `csrf_token()`
 
 CSRF tokens in hidden tag for [Slim-Csrf](https://github.com/slimphp/Slim-Csrf). 
+(was `hidden_csrf_token()`)
 
 ```
-{{ hidden_csrf_token() }}
+{{ csrf_token() }}
 ```
+
+#### `path(string $routeName, array $data = [], array $queryParams = [])`
+
+Get the url for a named route
+(same as `url_for()` in slim/twig-view).
+
+#### `url(string $routeName, array $data = [], array $queryParams = [])`
+
+Get the full url for a named route.
+(same as `full_url_for()` in slim/twig-view).
 
 
 ### More Functions from slim/twig-view.
 
-#### url_for()
+#### `is_current_url(string $routeName, array $data = [])`
 
-Get the url for a named route.
+check if the route name is the current URL.
 
-`{{ url_for(string $routeName, array $data = [], array $queryParams = []) }}`
+#### `current_url(bool $withQueryString = false)`
 
-#### full_url_for()
+Get the current path.
 
-Get the full url for a named route. 
-
-`{{ full_url_for(string $routeName, array $data = [], array $queryParams = []) }}`
-
-#### is_current_url()
-
-`{{ is_current_url(string $routeName, array $data = []) }}`
-
-#### current_url()
-
-Get current path on given Uri.
-
-`{{ current_url(bool $withQueryString = false) }}`
-
-#### get_uri()
+#### `get_uri()`
 
 Get `Psr\Http\Message\UriInterface` object.
 
-`{{ get_uri() }}`
-
-#### base_path()
+#### `base_path()`
 
 Get base path string.
-
-`{{ base_path() }}`

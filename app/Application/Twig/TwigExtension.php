@@ -30,7 +30,9 @@ class TwigExtension extends AbstractExtension
     {
         return [
             new TwigFunction('url_for', [TwigFunctions::class, 'urlFor']),
+            new TwigFunction('path', [TwigFunctions::class, 'urlFor']),
             new TwigFunction('full_url_for', [TwigFunctions::class, 'fullUrlFor']),
+            new TwigFunction('url', [TwigFunctions::class, 'fullUrlFor']),
             new TwigFunction('is_current_url', [TwigFunctions::class, 'isCurrentUrl']),
             new TwigFunction('current_url', [TwigFunctions::class, 'getCurrentUrl']),
             new TwigFunction('get_uri', [TwigFunctions::class, 'getUri']),
@@ -39,6 +41,7 @@ class TwigExtension extends AbstractExtension
              * new functions
              */
             new TwigFunction('hidden_csrf_token', [TwigFunctions::class, 'getCsrfTokens']),
+            new TwigFunction('csrf_token', [TwigFunctions::class, 'getCsrfTokens']),
             new TwigFunction('flashMessages', [TwigFunctions::class, 'getFlashMessages']),
             new TwigFunction('flashNotices', [TwigFunctions::class, 'getFlashNotices']),
         ];
