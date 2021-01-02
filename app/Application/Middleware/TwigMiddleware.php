@@ -9,15 +9,11 @@ declare(strict_types=1);
 
 namespace App\Application\Middleware;
 
-use App\Application\Session\SessionInterface;
-use App\Application\Twig\TwigExtension;
-use App\Application\Twig\TwigRuntimeLoader;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\App;
-use Slim\Interfaces\RouteParserInterface;
 use Slim\Views\Twig;
 
 class TwigMiddleware implements MiddlewareInterface
@@ -28,23 +24,9 @@ class TwigMiddleware implements MiddlewareInterface
     protected $twig;
 
     /**
-     * @var RouteParserInterface
-     */
-    protected $routeParser;
-
-    /**
-     * @var string
-     */
-    protected $basePath;
-
-    /**
      * @var string|null
      */
     protected $attributeName;
-    /**
-     * @var SessionInterface
-     */
-    private $session;
 
     /**
      * @param App    $app
@@ -58,32 +40,20 @@ class TwigMiddleware implements MiddlewareInterface
         $twig = $container->get($containerKey);
 
         return new self(
-            $twig,
-            $app->getRouteCollector()->getRouteParser(),
-            $app->getContainer()->get(SessionInterface::class),
-            $app->getBasePath()
+            $twig
         );
     }
 
     /**
      * @param Twig $twig
-     * @param RouteParserInterface $routeParser
-     * @param SessionInterface $session
-     * @param string $basePath
      * @param string|null $attributeName
      */
     public function __construct(
         Twig $twig,
-        RouteParserInterface $routeParser,
-        SessionInterface $session,
-        string $basePath = '',
         ?string $attributeName = null
     ) {
         $this->twig = $twig;
-        $this->routeParser = $routeParser;
-        $this->basePath = $basePath;
         $this->attributeName = $attributeName;
-        $this->session = $session;
     }
 
     /**
@@ -91,11 +61,6 @@ class TwigMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $runtimeLoader = new TwigRuntimeLoader($this->routeParser, $request, $this->session, $this->basePath);
-        $this->twig->addRuntimeLoader($runtimeLoader);
-
-        $extension = new TwigExtension();
-        $this->twig->addExtension($extension);
 
         if ($this->attributeName !== null) {
             $request = $request->withAttribute($this->attributeName, $this->twig);

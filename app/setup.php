@@ -3,8 +3,12 @@
 
 use App\Application\Handlers\HttpErrorHandler;
 use App\Application\Handlers\ShutdownHandler;
+use App\Application\Session\SessionInterface;
+use App\Application\Twig\TwigExtension;
+use App\Application\Twig\TwigRuntimeLoader;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
+use Slim\Views\Twig;
 
 if (!isset($app) || !isset($request)) {
     return;
@@ -34,3 +38,14 @@ $app->addRoutingMiddleware();
 // Add Error Middleware
 $errorMiddleware = $app->addErrorMiddleware($displayErrorDetails, false, false);
 $errorMiddleware->setDefaultErrorHandler($errorHandler);
+
+/**
+ * set up Twig extension
+ */
+$twig = $app->getContainer()->get(Twig::class);
+
+$runtimeLoader = new TwigRuntimeLoader($app->getRouteCollector()->getRouteParser(), $request, $app->getContainer()->get(SessionInterface::class), $app->getBasePath());
+$twig->addRuntimeLoader($runtimeLoader);
+
+$extension = new TwigExtension();
+$twig->addExtension($extension);
