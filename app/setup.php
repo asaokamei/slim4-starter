@@ -7,6 +7,7 @@ use App\Application\Session\SessionInterface;
 use App\Application\Twig\TwigExtension;
 use App\Application\Twig\TwigRuntimeLoader;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerInterface;
 use Slim\App;
 use Slim\Views\Twig;
 
@@ -26,7 +27,7 @@ $displayErrorDetails = $app->getContainer()->get('settings')['displayErrorDetail
 // Create Error Handler
 $responseFactory = $app->getResponseFactory();
 $callableResolver = $app->getCallableResolver();
-$errorHandler = new HttpErrorHandler($callableResolver, $responseFactory, $app->getContainer()->get('view'));
+$errorHandler = new HttpErrorHandler($callableResolver, $responseFactory, $app->getContainer()->get('view'), $app->getContainer()->get(LoggerInterface::class));
 
 // Create Shutdown Handler
 $shutdownHandler = new ShutdownHandler($request, $errorHandler, $displayErrorDetails);
