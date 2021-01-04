@@ -5,6 +5,7 @@ namespace App\Application\Handlers;
 
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Log\LoggerInterface;
 use Slim\Exception\HttpException;
 use Slim\Handlers\ErrorHandler;
 use Slim\Interfaces\CallableResolverInterface;
@@ -23,10 +24,12 @@ class HttpErrorHandler extends ErrorHandler
     public function __construct(
         CallableResolverInterface $callableResolver,
         ResponseFactoryInterface $responseFactory,
-        Twig $twig)
-    {
+        Twig $twig,
+        LoggerInterface $logger
+    ) {
         parent::__construct($callableResolver, $responseFactory);
         $this->twig = $twig;
+        $this->logger = $logger;
     }
 
     /**
@@ -38,6 +41,11 @@ class HttpErrorHandler extends ErrorHandler
         $statusCode = $this->exception->getCode();
 
         $response = $this->responseFactory->createResponse($statusCode);
+        $title = $exception instanceof HttpException
+            ? $exception->getTitle()
+            : get_class($exception);
+
+        $this->logger->error($title, ['file' => $exception->getFile(), 'line' => $exception->getLine()]);
 
         if ($this->displayErrorDetails) {
             $whoops = new Run;
@@ -45,9 +53,6 @@ class HttpErrorHandler extends ErrorHandler
             $response->getBody()->write($whoops->handleException($exception));
             return $response;
         }
-        $title = $exception instanceof HttpException
-            ? $exception->getTitle()
-            : get_class($exception);
         try {
             return $this->twig->render($response, 'error.twig', [
                 'title' => $title,
