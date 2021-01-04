@@ -40,6 +40,9 @@ class AppMiddleware implements Middleware
             $url = $request->getUri()->__toString();
             $method = $request->getMethod();
             $this->logger->info("{$method} {$url}");
+            if ($method === 'POST') {
+                $this->logger->debug("POST Data: ", $request->getParsedBody());
+            }
         }
 
         $request = $request->withAttribute(self::APP_NAME, $this->app);
