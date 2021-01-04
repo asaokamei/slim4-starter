@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Application\Middleware\AppMiddleware;
-use App\Application\Middleware\CsRfGuard;
 use App\Application\Middleware\SessionMiddleware;
 use App\Application\Session\SessionInterface;
 use Psr\Http\Message\ResponseInterface;
