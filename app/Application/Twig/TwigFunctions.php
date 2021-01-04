@@ -12,6 +12,7 @@ namespace App\Application\Twig;
 use App\Application\Middleware\SessionMiddleware;
 use App\Application\Session\SessionInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Slim\App;
 use Slim\Interfaces\RouteParserInterface;
 use Slim\Views\TwigRuntimeExtension;
 
@@ -25,22 +26,25 @@ class TwigFunctions extends TwigRuntimeExtension
      * @var SessionInterface
      */
     private $session;
+    /**
+     * @var App
+     */
+    private $app;
 
     /**
-     * @param RouteParserInterface $routeParser Route parser
+     * @param App $app
      * @param ServerRequestInterface $request Uri
      * @param SessionInterface $session
-     * @param string $basePath Base path
      */
     public function __construct(
-        RouteParserInterface $routeParser,
+        App $app,
         ServerRequestInterface $request,
-        SessionInterface $session,
-        string $basePath = ''
+        SessionInterface $session
     ) {
-        parent::__construct($routeParser, $request->getUri(), $basePath);
+        parent::__construct($app->getRouteCollector()->getRouteParser(), $request->getUri(), $app->getBasePath());
         $this->request = $request;
         $this->session = $session;
+        $this->app = $app;
     }
 
     public function getCsrfTokens(): string

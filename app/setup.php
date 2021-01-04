@@ -44,7 +44,7 @@ $errorMiddleware->setDefaultErrorHandler($errorHandler);
  */
 $twig = $app->getContainer()->get(Twig::class);
 
-$runtimeLoader = new TwigRuntimeLoader($app->getRouteCollector()->getRouteParser(), $request, $app->getContainer()->get(SessionInterface::class), $app->getBasePath());
+$runtimeLoader = new TwigRuntimeLoader($app, $request, $app->getContainer()->get(SessionInterface::class));
 $twig->addRuntimeLoader($runtimeLoader);
 
 $extension = new TwigExtension();

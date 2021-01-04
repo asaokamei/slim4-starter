@@ -12,6 +12,7 @@ namespace App\Application\Twig;
 use App\Application\Session\SessionInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
+use Slim\App;
 use Slim\Interfaces\RouteParserInterface;
 use Twig\RuntimeLoader\RuntimeLoaderInterface;
 
@@ -35,24 +36,25 @@ class TwigRuntimeLoader implements RuntimeLoaderInterface
      * @var SessionInterface
      */
     private $session;
+    /**
+     * @var App
+     */
+    private $app;
 
     /**
      * TwigRuntimeLoader constructor.
      *
-     * @param RouteParserInterface $routeParser
+     * @param App $app
      * @param ServerRequestInterface $request
      * @param SessionInterface $session
-     * @param string $basePath
      */
     public function __construct(
-        RouteParserInterface $routeParser,
+        App $app,
         ServerRequestInterface $request,
-        SessionInterface $session,
-        string $basePath = ''
+        SessionInterface $session
     ) {
-        $this->routeParser = $routeParser;
+        $this->app = $app;
         $this->request = $request;
-        $this->basePath = $basePath;
         $this->session = $session;
     }
 
@@ -62,7 +64,11 @@ class TwigRuntimeLoader implements RuntimeLoaderInterface
     public function load(string $class)
     {
         if (TwigFunctions::class === $class) {
-            return new TwigFunctions($this->routeParser, $this->request, $this->session, $this->basePath);
+            return new TwigFunctions(
+                $this->app,
+                $this->request,
+                $this->session
+            );
         }
         if (TwigFilters::class === $class) {
             return new TwigFilters();
