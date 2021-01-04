@@ -7,6 +7,7 @@ namespace App\Application\Container;
 use App\Application\Session\AuraSession;
 use App\Application\Session\SessionInterface;
 use Aura\Session\SessionFactory;
+use Monolog\Handler\FingersCrossedHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
@@ -63,7 +64,8 @@ class Provider
 
     private function getMonolog(ContainerInterface $c)
     {
-        $settings = $c->get('settings');
+        $settings = $c->get('settings') ?? [];
+        $isProduction = $settings['production'] ?? false;
 
         $logger = new Logger($settings['app_name']??'slim-app');
 
@@ -71,10 +73,19 @@ class Provider
         $logger->pushProcessor($processor);
 
         $path = $settings['projectRoot'] . '/var/app.log';
-        $level = $settings['production'] ?? false
-                ? Logger::ERROR
-                : Logger::DEBUG;
-        $handler = new StreamHandler($path, $level);
+
+        if ($isProduction) {
+            $handler = new FingersCrossedHandler(
+                new StreamHandler($path, Logger::DEBUG),
+                Logger::ERROR,
+                0,
+                true,
+                true,
+                Logger::NOTICE
+            );
+        } else {
+            $handler = new StreamHandler($path, Logger::DEBUG);
+        }
         $logger->pushHandler($handler);
 
         return $logger;
