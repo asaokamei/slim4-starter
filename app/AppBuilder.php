@@ -101,13 +101,14 @@ class AppBuilder
 
         $env = BootEnv::forge($this->root, $this->cache)
             ->setUseCache($this->useCache);
+        $settings = $env->load();
         $defaults = [
             'projectRoot' => $this->root,
             'cacheDirectory' => $this->cache,
             'production' => $env->isProduction(),
             'displayErrorDetails' => $this->showError,
         ];
-        $settings = $defaults + $env->load();
+        $settings = $defaults + $settings;
 
         // Build PHP-DI Container instance
 
