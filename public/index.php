@@ -24,6 +24,8 @@ $request = ServerRequestCreatorFactory::create()
 $app = AppBuilder::forge(realpath(__DIR__.'/../'))
     ->setUseCache(false)
     ->setShowError(false)
+    ->loadEnv(true)
+    ->loadContainer(false)
     ->build($request);
 
 // Run App & Emit Response

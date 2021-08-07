@@ -31,6 +31,11 @@ class BootEnv
     private $environment = 'local';
 
     /**
+     * @var array
+     */
+    private $settings;
+
+    /**
      * @param string $rootDir
      * @param string $cacheDir
      * @return static
@@ -49,7 +54,7 @@ class BootEnv
         return filemtime($cache) >= filemtime($origin);
     }
 
-    private function getSettingsFromCache(): array
+    private function parseFromCacheFile(): array
     {
         if (file_exists($this->cacheFile) && $this->isCacheNewer($this->cacheFile, $this->envDir)) {
             try {
@@ -67,12 +72,12 @@ class BootEnv
         return (array) $settings;
     }
 
-    public function load(): array
+    public function load(): void
     {
-        if ($this->useCache && $this->isProduction()) {
-            return $this->getSettingsFromCache();
+        if ($this->useCache) {
+            $this->settings = $this->parseFromCacheFile();
         }
-        return $this->parseEnvFile();
+        $this->settings = $this->parseEnvFile();
     }
 
     /**
@@ -96,11 +101,19 @@ class BootEnv
     private function parseEnvFile(): array
     {
         $env = Dotenv::createImmutable($this->envDir);
-        $settings = $env->load();
+        $settings = $env->safeLoad();
         $env->required([self::APP_ENV]);
 
         $this->environment = strtolower($settings[self::APP_ENV] ?? 'production');
 
         return $settings;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSettings(): array
+    {
+        return $this->settings;
     }
 }
