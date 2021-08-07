@@ -112,7 +112,7 @@ class AppBuilder
 
         // Build PHP-DI Container instance
 
-        $container = BootContainer::forge($settings)
+        $container = BootContainer::forge($settings, $this->cache)
             ->setUseCache($this->useCache)
             ->build();
 

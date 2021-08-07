@@ -17,6 +17,11 @@ class BootContainer
     private $useCache = false;
 
     /**
+     * @var null|string
+     */
+    private $cacheDir = null;
+
+    /**
      * @var array
      */
     private $settings = [];
@@ -26,10 +31,11 @@ class BootContainer
      */
     private $provider;
 
-    public static function forge(array $settings): self
+    public static function forge(array $settings, string $cacheDir): self
     {
         $self = new self();
         $self->settings = $settings;
+        $self->cacheDir = $cacheDir;
         $self->provider = new Provider();
 
         return $self;
@@ -43,8 +49,10 @@ class BootContainer
     {
         $containerBuilder = new ContainerBuilder();
 
-        if ($this->useCache) {
-            $containerBuilder->enableCompilation(__DIR__ . '/../var/cache');
+        if ($this->useCache && $this->cacheDir) { // compilation not working, yet
+            if ($containerBuilder->isCompilationEnabled()) {
+                $containerBuilder->enableCompilation($this->cacheDir);
+            }
         }
 
         $containerBuilder->addDefinitions([
