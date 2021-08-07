@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Application\Container;
 
 use Dotenv\Dotenv;
+use Throwable;
 
 class BootEnv
 {
@@ -38,7 +39,7 @@ class BootEnv
     {
         $self = new self();
         $self->envDir = $rootDir;
-        $self->cacheFile = $cacheDir . '/env.cached.json';
+        $self->cacheFile = rtrim($cacheDir, '/') . '/env.cached.json';
 
         return $self;
     }
@@ -51,46 +52,40 @@ class BootEnv
     private function getSettingsFromCache(): array
     {
         if (file_exists($this->cacheFile) && $this->isCacheNewer($this->cacheFile, $this->envDir)) {
-            return json_decode(file_get_contents($this->cacheFile));
+            try {
+                return json_decode(file_get_contents($this->cacheFile), true);
+            } catch (Throwable $e) {
+                unlink($this->cacheFile);
+                return $this->parseEnvFile();
+            }
         }
         $settings = $this->parseEnvFile();
-        if (file_exists($this->cacheFile)) {
-            unlink($this->cacheFile);
-        }
         if (is_array($settings)) {
-            file_put_contents($this->cacheFile, json_encode($settings));
+            file_put_contents($this->cacheFile, json_encode($settings, JSON_UNESCAPED_UNICODE), LOCK_EX);
         }
 
         return (array) $settings;
     }
 
-    private function getSettings(): array
+    public function load(): array
     {
-        if ($this->useCache) {
+        if ($this->useCache && $this->isProduction()) {
             return $this->getSettingsFromCache();
         }
         return $this->parseEnvFile();
-    }
-
-    public function load(): array
-    {
-        if (!file_exists($this->cacheFile)) {
-            mkdir($this->cacheFile, 0644);
-        }
-        return $this->getSettings();
     }
 
     /**
      * @param false $useCache
      * @return static
      */
-    public function setUseCache(bool $useCache)
+    public function setUseCache(bool $useCache): BootEnv
     {
         $this->useCache = $useCache;
         return $this;
     }
 
-    public function isProduction()
+    public function isProduction(): bool
     {
         return in_array($this->environment, ['prod', 'production']);
     }
@@ -106,6 +101,6 @@ class BootEnv
 
         $this->environment = strtolower($settings[self::APP_ENV] ?? 'production');
 
-        return $settings === false ? [] : $settings;
+        return $settings;
     }
 }
